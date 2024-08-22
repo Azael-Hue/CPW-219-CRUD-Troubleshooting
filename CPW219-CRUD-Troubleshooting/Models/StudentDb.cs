@@ -2,11 +2,14 @@
 {
     public static class StudentDb
     {
-        public static Student Add(Student p, SchoolContext db)
+        public static Student Add(Student newStudent, SchoolContext db)
         {
             //Add student to context
-            db.Students.Add(p);
-            return p;
+            db.Students.Add(newStudent);
+            //Send insert query to database
+            db.SaveChanges();
+            return newStudent;
+
         }
 
         public static List<Student> GetStudents(SchoolContext context)
@@ -17,24 +20,24 @@
 
         public static Student GetStudent(SchoolContext context, int id)
         {
-            Student p2 = context
-                            .Students
-                            .Where(s => s.StudentId == id)
-                            .Single();
-            return p2;
+            Student studentRetrieved = context
+                                        .Students
+                                        .Where(s => s.StudentId == id)
+                                        .Single();
+            return studentRetrieved;
         }
 
-        public static void Delete(SchoolContext context, Student p)
+        public static void Delete(SchoolContext context, Student s)
         {
-            context.Students.Update(p);
+            context.Students.Remove(s);
+            context.SaveChanges();
         }
 
-        public static void Update(SchoolContext context, Student p)
+        public static void Update(SchoolContext context, Student s)
         {
-            //Mark the object as deleted
-            context.Students.Remove(p);
-
-            //Send delete query to database
+            //Update the student in the context
+            context.Students.Update(s);
+            //Send update query to database
             context.SaveChanges();
         }
     }
