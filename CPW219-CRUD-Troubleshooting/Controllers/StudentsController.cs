@@ -5,74 +5,88 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly SchoolContext context;
+        private readonly SchoolContext _context;
 
         public StudentsController(SchoolContext dbContext)
         {
-            context = dbContext;
+            _context = dbContext;
         }
 
         public IActionResult Index()
         {
-            List<Student> products = StudentDb.GetStudents(context);
-            return View();
+            List<Student> products = StudentDb.GetStudents(_context);
+            return View(products);
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(Student p)
+        public IActionResult Create(Student s)
         {
             if (ModelState.IsValid)
             {
-                StudentDb.Add(p, context);
-                ViewData["Message"] = $"{p.Name} was added!";
+                StudentDb.Add(s, _context);
+                ViewData["Message"] = $"{s.Name} was added!";
                 return View();
             }
 
             //Show web page with errors
-            return View(p);
+            return View(s);
         }
 
         public IActionResult Edit(int id)
         {
             //get the product by id
-            Student p = StudentDb.GetStudent(context, id);
+            Student s = StudentDb.GetStudent(_context, id);
+
+            if (s == null)
+            {
+                return NotFound();
+            }
 
             //show it on web page
-            return View();
+            return View(s);
         }
 
         [HttpPost]
-        public IActionResult Edit(Student p)
+        public IActionResult Edit(Student s)
         {
             if (ModelState.IsValid)
             {
-                StudentDb.Update(context, p);
-                ViewData["Message"] = "Product Updated!";
-                return View(p);
+                StudentDb.Update(_context, s);
+                TempData["Message"] = $"Student {s.Name} was Updated!";
+                return RedirectToAction("Index");
             }
+
             //return view with errors
-            return View(p);
+            return View(s);
         }
 
         public IActionResult Delete(int id)
         {
-            Student p = StudentDb.GetStudent(context, id);
-            return View(p);
+            Student s = StudentDb.GetStudent(_context, id);
+            if (s == null)
+            {
+                return NotFound();
+            }
+
+            return View(s);
         }
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirm(int id)
         {
-            //Get Product from database
-            Student p = StudentDb.GetStudent(context, id);
+            //Get Student from database
+            Student s = StudentDb.GetStudent(_context, id);
 
-            StudentDb.Delete(context, p);
+            //Delete the student
+            StudentDb.Delete(_context, s);
 
+            TempData["Message"] = $"{s.Name} was deleted!";
             return RedirectToAction("Index");
         }
     }
