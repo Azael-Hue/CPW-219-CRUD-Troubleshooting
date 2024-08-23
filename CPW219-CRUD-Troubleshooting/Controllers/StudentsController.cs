@@ -30,7 +30,7 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             if (ModelState.IsValid)
             {
                 StudentDb.Add(s, _context);
-                ViewData["Message"] = $"{s.Name} was added!";
+                ViewData["Message"] = $"{s.Name} was added to the roster!";
                 return View();
             }
 
@@ -58,7 +58,7 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             if (ModelState.IsValid)
             {
                 StudentDb.Update(_context, s);
-                TempData["Message"] = $"Student {s.Name} was Updated!";
+                TempData["Message"] = $"{s.Name}'s info was Updated!";
                 return RedirectToAction("Index");
             }
 
@@ -82,11 +82,16 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
         {
             //Get Student from database
             Student s = StudentDb.GetStudent(_context, id);
+            
+            if (s != null)
+            {
+                //Delete the student
+                StudentDb.Delete(_context, s);
+                TempData["Message"] = s.Name + " was deleted";
+                return RedirectToAction("Index");
+            }
 
-            //Delete the student
-            StudentDb.Delete(_context, s);
-
-            TempData["Message"] = s.Name + " was deleted!";
+            TempData["Message"] = "This student was already deleted";
             return RedirectToAction("Index");
         }
 
