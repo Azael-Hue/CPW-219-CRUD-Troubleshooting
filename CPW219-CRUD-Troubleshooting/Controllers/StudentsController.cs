@@ -86,7 +86,7 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             //Delete the student
             StudentDb.Delete(_context, s);
 
-            TempData["Message"] = $"{s.Name} was deleted!";
+            TempData["Message"] = s.Name + " was deleted!";
             return RedirectToAction("Index");
         }
     }
