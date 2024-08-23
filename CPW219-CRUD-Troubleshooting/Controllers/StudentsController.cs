@@ -89,5 +89,16 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             TempData["Message"] = s.Name + " was deleted!";
             return RedirectToAction("Index");
         }
+
+        public IActionResult Details(int id)
+        {
+            Student s = StudentDb.GetStudent(_context, id);
+            if (s == null)
+            {
+                return NotFound();
+            }
+
+            return View(s);
+        }
     }
 }
